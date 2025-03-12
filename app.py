@@ -81,29 +81,29 @@ with gr.Blocks() as iface:
         """
     )
     
-    with gr.Row():
-        with gr.Column():
-            text_input = gr.Textbox(label="Text to Synthesize", placeholder="Enter the text to convert to speech...", lines=3)
-            ref_audio_input = gr.Audio(type="numpy", label="Reference Prompt Audio")
-            ref_text_input = gr.Textbox(label="Text in Reference Prompt Audio", placeholder="Enter the transcript of the reference audio...", lines=2)
-            submit_btn = gr.Button("🎤 Generate Speech", variant="primary")
+    # with gr.Row():
+    #     with gr.Column():
+    #         text_input = gr.Textbox(label="Text to Synthesize", placeholder="Enter the text to convert to speech...", lines=3)
+    #         ref_audio_input = gr.Audio(type="numpy", label="Reference Prompt Audio")
+    #         ref_text_input = gr.Textbox(label="Text in Reference Prompt Audio", placeholder="Enter the transcript of the reference audio...", lines=2)
+    #         submit_btn = gr.Button("🎤 Generate Speech", variant="primary")
         
-        with gr.Column():
-            output_audio = gr.Audio(label="Generated Speech", type="numpy")
+    #     with gr.Column():
+    #         output_audio = gr.Audio(label="Generated Speech", type="numpy")
     
-    # Add multiple examples
-    examples = [
-        [ex["synth_text"], (ex["sample_rate"], ex["audio_data"]), ex["ref_text"]] for ex in EXAMPLES
-    ]
+    # # Add multiple examples
+    # examples = [
+    #     [ex["synth_text"], (ex["sample_rate"], ex["audio_data"]), ex["ref_text"]] for ex in EXAMPLES
+    # ]
     
-    gr.Examples(
-        examples=examples,
-        inputs=[text_input, ref_audio_input, ref_text_input],
-        label="Choose an example:"
-    )
+    # gr.Examples(
+    #     examples=examples,
+    #     inputs=[text_input, ref_audio_input, ref_text_input],
+    #     label="Choose an example:"
+    # )
 
-    submit_btn.click(synthesize_speech, inputs=[text_input, ref_audio_input, ref_text_input], outputs=[output_audio])
+    # submit_btn.click(synthesize_speech, inputs=[text_input, ref_audio_input, ref_text_input], outputs=[output_audio])
 
 # Launch the app
 if __name__ == "__main__":
-    iface.launch(share=True)
+    iface.queue(50).launch()

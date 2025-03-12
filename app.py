@@ -65,69 +65,45 @@ for example in EXAMPLES:
     example["audio_data"] = audio_data
 
 
-# # Define Gradio interface with layout adjustments
-# with gr.Blocks() as iface:
-#     gr.Markdown(
-#         """
-#         # **IndicF5: High-Quality Text-to-Speech for Indian Languages**
-
-#         [![Hugging Face](https://img.shields.io/badge/HuggingFace-Model-orange)](https://huggingface.co/ai4bharat/IndicF5)
-
-#         We release **IndicF5**, a **near-human polyglot** **Text-to-Speech (TTS)** model trained on **1417 hours** of high-quality speech from **[Rasa](https://huggingface.co/datasets/ai4bharat/Rasa), [IndicTTS](https://www.iitm.ac.in/donlab/indictts/database), [LIMMITS](https://sites.google.com/view/limmits24/), and [IndicVoices-R](https://huggingface.co/datasets/ai4bharat/indicvoices_r)**.  
-
-#         IndicF5 supports **11 Indian languages**:  
-#         **Assamese, Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Odia, Punjabi, Tamil, Telugu.**  
-        
-#         Generate speech using a reference prompt audio and its corresponding text.
-#         """
-#     )
-    
-#     with gr.Row():
-#         with gr.Column():
-#             text_input = gr.Textbox(label="Text to Synthesize", placeholder="Enter the text to convert to speech...", lines=3)
-#             ref_audio_input = gr.Audio(type="numpy", label="Reference Prompt Audio")
-#             ref_text_input = gr.Textbox(label="Text in Reference Prompt Audio", placeholder="Enter the transcript of the reference audio...", lines=2)
-#             submit_btn = gr.Button("🎤 Generate Speech", variant="primary")
-        
-#         with gr.Column():
-#             output_audio = gr.Audio(label="Generated Speech", type="numpy")
-    
-#     # Add multiple examples
-#     examples = [
-#         [ex["synth_text"], (ex["sample_rate"], ex["audio_data"]), ex["ref_text"]] for ex in EXAMPLES
-#     ]
-    
-#     gr.Examples(
-#         examples=examples,
-#         inputs=[text_input, ref_audio_input, ref_text_input],
-#         label="Choose an example:"
-#     )
-
-#     submit_btn.click(synthesize_speech, inputs=[text_input, ref_audio_input, ref_text_input], outputs=[output_audio])
-
-## FARZI CODE
+# Define Gradio interface with layout adjustments
 with gr.Blocks() as iface:
     gr.Markdown(
         """
         # **IndicF5: High-Quality Text-to-Speech for Indian Languages**
-        Generate speech using a reference audio and corresponding text.
+
+        [![Hugging Face](https://img.shields.io/badge/HuggingFace-Model-orange)](https://huggingface.co/ai4bharat/IndicF5)
+
+        We release **IndicF5**, a **near-human polyglot** **Text-to-Speech (TTS)** model trained on **1417 hours** of high-quality speech from **[Rasa](https://huggingface.co/datasets/ai4bharat/Rasa), [IndicTTS](https://www.iitm.ac.in/donlab/indictts/database), [LIMMITS](https://sites.google.com/view/limmits24/), and [IndicVoices-R](https://huggingface.co/datasets/ai4bharat/indicvoices_r)**.  
+
+        IndicF5 supports **11 Indian languages**:  
+        **Assamese, Bengali, Gujarati, Hindi, Kannada, Malayalam, Marathi, Odia, Punjabi, Tamil, Telugu.**  
+        
+        Generate speech using a reference prompt audio and its corresponding text.
         """
     )
-
+    
     with gr.Row():
-        text_input = gr.Textbox(label="Text to Synthesize", placeholder="Enter text here...")
-        ref_text_input = gr.Textbox(label="Reference Text", placeholder="Enter reference text here...")
-
-    with gr.Row():
-        ref_audio_input = gr.Audio(label="Reference Audio", type="numpy")
-        output_audio = gr.Audio(label="Synthesized Audio", type="numpy")
-
-    synthesize_button = gr.Button("Synthesize Speech")
-
-    synthesize_button.click(
-        synthesize_speech, 
-        inputs=[text_input, ref_audio_input, ref_text_input], 
-        outputs=output_audio
+        with gr.Column():
+            text_input = gr.Textbox(label="Text to Synthesize", placeholder="Enter the text to convert to speech...", lines=3)
+            ref_audio_input = gr.Audio(type="numpy", label="Reference Prompt Audio")
+            ref_text_input = gr.Textbox(label="Text in Reference Prompt Audio", placeholder="Enter the transcript of the reference audio...", lines=2)
+            submit_btn = gr.Button("🎤 Generate Speech", variant="primary")
+        
+        with gr.Column():
+            output_audio = gr.Audio(label="Generated Speech", type="numpy")
+    
+    # Add multiple examples
+    examples = [
+        [ex["synth_text"], (ex["sample_rate"], ex["audio_data"]), ex["ref_text"]] for ex in EXAMPLES
+    ]
+    
+    gr.Examples(
+        examples=examples,
+        inputs=[text_input, ref_audio_input, ref_text_input],
+        label="Choose an example:"
     )
+
+    submit_btn.click(synthesize_speech, inputs=[text_input, ref_audio_input, ref_text_input], outputs=[output_audio])
+
 
 iface.launch()

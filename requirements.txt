@@ -24,3 +24,6 @@ transformers<4.50
 # wandb
 # x_transformers>=1.31.14
 spaces
+fastapi
+uvicorn[standard]
+pydantic

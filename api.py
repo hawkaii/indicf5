@@ -4,9 +4,14 @@ import torch
 import tempfile
 import numpy as np
 import soundfile as sf
+import logging
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModel
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize FastAPI app
 app = FastAPI(title="IndicF5 TTS API", description="Text-to-Speech API using IndicF5 model")
@@ -14,6 +19,11 @@ app = FastAPI(title="IndicF5 TTS API", description="Text-to-Speech API using Ind
 # Reference audio path and text (hardcoded)
 REF_AUDIO_PATH = "part3.wav"
 REF_TEXT = "कस्टमर को तभी कॉल करो जब ड्यूटी लेनी हो; इससे रेटिंग अच्छी रहेगी और आगे ज़्यादा ड्यूटी मिलेगी—तैयार हो तो 'कॉल कस्टमर' दबाओ।"
+
+# Monkey patch to fix torch.no_available_grad bug in IndicF5
+if not hasattr(torch, 'no_available_grad'):
+    torch.no_available_grad = torch.no_grad
+    logger.info("Applied monkey patch for torch.no_available_grad -> torch.no_grad")
 
 # Load TTS model
 print("Loading IndicF5 model...")
@@ -42,15 +52,28 @@ def synthesize_speech(text: str) -> tuple:
         raise ValueError("Text cannot be empty")
     
     try:
+        # Load reference audio
+        logger.info(f"Loading reference audio: {REF_AUDIO_PATH}")
+        ref_audio_data, ref_sample_rate = sf.read(REF_AUDIO_PATH)
+        
+        # Save reference audio to temporary file (like app.py does)
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as temp_audio:
+            sf.write(temp_audio.name, ref_audio_data, samplerate=ref_sample_rate, format='WAV')
+            temp_audio.flush()
+            temp_ref_path = temp_audio.name
+        
         # Generate audio using the model
-        audio = model(text, ref_audio_path=REF_AUDIO_PATH, ref_text=REF_TEXT)
+        logger.info(f"Synthesizing text: {text[:50]}...")
+        audio = model(text, ref_audio_path=temp_ref_path, ref_text=REF_TEXT)
         
         # Normalize output if needed
         if audio.dtype == np.int16:
             audio = audio.astype(np.float32) / 32768.0
         
+        logger.info("Synthesis successful")
         return 24000, audio
     except Exception as e:
+        logger.error(f"Error during speech synthesis: {str(e)}", exc_info=True)
         raise Exception(f"Error during speech synthesis: {str(e)}")
 
 @app.post("/synthesize", response_model=TTSResponse)

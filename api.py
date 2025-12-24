@@ -8,10 +8,15 @@ import logging
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import AutoModel
+import torchaudio
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Set torchaudio backend to soundfile instead of torchcodec
+torchaudio.set_audio_backend("soundfile")
+logger.info("Set torchaudio backend to soundfile")
 
 # Initialize FastAPI app
 app = FastAPI(title="IndicF5 TTS API", description="Text-to-Speech API using IndicF5 model")

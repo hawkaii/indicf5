@@ -4,6 +4,12 @@ FROM registry.hf.space/ai4bharat-indicf5:latest
 # Set working directory
 WORKDIR /app
 
+# Install system dependencies for PyAudio
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    portaudio19-dev \
+    python3-pyaudio \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install additional dependencies for FastAPI and socket server
 RUN pip3 install --no-cache-dir fastapi uvicorn[standard] pydantic pyaudio
 

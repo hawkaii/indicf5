@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-async def listen_to_IndicF5(text, server_ip="localhost", server_port=9998):
+async def listen_to_IndicF5(text, server_ip="34.177.101.103", server_port=9998):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     await asyncio.get_event_loop().run_in_executor(
         None, client_socket.connect, (server_ip, int(server_port))
